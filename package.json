@@ -1,0 +1,16 @@
+{
+  "name": "within-reach",
+  "version": "1.0.0",
+  "description": "An accessible online shop for adaptive and assistive everyday products. Zero runtime dependencies.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "start": "node src/server.js",
+    "seed": "node scripts/seed.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test --no-warnings test/*.test.js",
+    "audit:deps": "node scripts/check-no-deps.js"
+  }
+}
