@@ -1,5 +1,19 @@
 # Operations
 
+## Fastest path to a live URL: Render
+
+The repo ships a `render.yaml` (a [Render Blueprint](https://render.com/docs/blueprint-spec)) that deploys
+this app with one click — see the "Deploy to Render" button in the README. It provisions a free web
+service, sets `HOST=0.0.0.0`, `TRUST_PROXY=1` (safe here because Render, not arbitrary internet traffic, is
+what sets `X-Forwarded-For`) and a generated `ADMIN_PASSWORD` secret, and runs `npm run seed && npm start`
+on boot. The free tier's disk is ephemeral, so the catalogue and any admin-created orders reset on every
+redeploy or restart — fine for a demo, not for real data (see "Database" below for something durable).
+
+Find the generated admin password in the Render dashboard's environment tab, or in the boot logs the first
+time it starts. For a non-demo deployment, fork the repo, edit `render.yaml` to point at your fork, and set
+your own `ADMIN_EMAIL`/`ADMIN_PASSWORD` values (or a paid plan with a persistent disk, so `DB_PATH` survives
+restarts).
+
 ## Environment variables
 
 See `.env.example` for the full list with defaults. Highlights:

@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: within-reach
+    runtime: node
+    plan: free
+    branch: master
+    buildCommand: npm install
+    # The free tier's disk is ephemeral, so re-seed on every boot; seedProducts()/ensureAdmin() are both
+    # idempotent (upsert by slug, admin created only if none exists), so this is safe on every restart.
+    startCommand: npm run seed && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      # Render terminates TLS and proxies over HTTP, forwarding the real client IP — only trust it here
+      # because Render, not arbitrary internet traffic, is what sets this header. See docs/SECURITY.md.
+      - key: TRUST_PROXY
+        value: "1"
+      - key: ADMIN_EMAIL
+        value: admin@example.com
+      - key: ADMIN_PASSWORD
+        generateValue: true
+      - key: SUPPORT_EMAIL
+        value: help@example.com
