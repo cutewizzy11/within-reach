@@ -8,9 +8,10 @@ import { parseFilters, listProducts, getProduct, cartLines, totals } from '../mo
 export function shopRoutes(app) {
   // ------------------------------------------------------------------------------------- home
   app.get('/', (ctx) => {
-    const featured = listProducts(ctx.db, { featuredOnly: true, limit: 6 });
+    const featured = listProducts(ctx.db, { featuredOnly: true, limit: 8 });
     const sample = featured.find((p) => p.slug === 'rocker-knife') ?? featured[0];
-    const heroPlates = featured.slice(0, 3);
+    const heroPicks = featured.slice(0, 4);
+    const newIn = listProducts(ctx.db, { sort: 'featured', limit: 8 }).filter((p) => !featured.some((f) => f.id === p.id)).slice(0, 4);
     ctx.page(200, layout(ctx, {
       title: 'Everyday things that fit you',
       description: 'An online shop for adaptive and assistive products, described by how they work for your body.',
@@ -18,29 +19,35 @@ export function shopRoutes(app) {
       <section class="hero" aria-labelledby="hero-h">
         <div class="wrap hero__grid">
           <div class="hero__copy">
-            <p class="eyebrow">Adaptive products, described honestly</p>
+            <p class="eyebrow">Now shipping · ${ctx.config.returnDays}-day returns</p>
             <h1 id="hero-h">Everyday things, made to fit <span class="mark">your</span> hands, eyes, ears and pace.</h1>
-            <p class="lede">Every product has an <strong>Access Facts</strong> label: how many hands, how much effort, what setup, what senses it needs. No guessing from a glossy photo.</p>
+            <p class="lede">Every product carries an <strong>Access Facts</strong> label — hands needed, effort, setup time, what senses it depends on — right on the product page. No guessing from a glossy photo.</p>
             <p class="hero__cta">
-              <a class="btn btn--big" href="#need-finder">Start with what is hard</a>
-              <a class="btn btn--big btn--ghost" href="/shop">See everything</a>
+              <a class="btn btn--buy btn--big" href="/shop">Shop all products</a>
+              <a class="btn btn--big btn--ghost" href="#need-finder">Find what helps</a>
             </p>
           </div>
-          <div class="hero__art" aria-hidden="true">
-            ${heroPlates.map((p, i) => html`<div class="hero__plate hero__plate--${i + 1} plate tone-${p.tone}">${glyph(p.glyph, { size: 120, width: 4.5 })}</div>`)}
-          </div>
+          <ul class="hero__shelf" aria-label="Shop our picks">
+            ${heroPicks.map((p, i) => html`<li class="hero__tile hero__tile--${i + 1}"><a href="/product/${p.slug}">
+              <span class="plate tone-${p.tone} hero__tile-plate"><span class="plate__ring" aria-hidden="true"></span>${glyph(p.glyph, { size: 72, width: 5 })}</span>
+              <span class="hero__tile-name">${p.name}</span>
+              <span class="hero__tile-price">${money(p.price_cents)}</span>
+            </a></li>`)}
+          </ul>
         </div>
       </section>
 
       <section class="section" id="need-finder" aria-labelledby="need-h">
         <div class="wrap">
-          <h2 id="need-h" class="section__title">What is hard right now?</h2>
+          <p class="eyebrow">Shop by what is hard</p>
+          <h2 id="need-h" class="section__title">Start with what is hard right now</h2>
           <p class="section__lede">Pick the closest fit. You can add more filters afterwards, and many products help with more than one thing.</p>
           <ul class="need-grid">
             ${NEEDS.map((n) => html`<li><a class="need tone-${n.tone}" href="/shop?need=${n.id}">
               ${glyph(n.glyph, { size: 64, cls: 'need__glyph', width: 5 })}
               <span class="need__label">${n.label}</span>
               <span class="need__blurb">${n.blurb}</span>
+              <span class="need__arrow" aria-hidden="true">Shop ${n.short.toLowerCase()} →</span>
             </a></li>`)}
           </ul>
         </div>
@@ -49,10 +56,11 @@ export function shopRoutes(app) {
       <section class="section section--tint" aria-labelledby="facts-demo-h">
         <div class="wrap split">
           <div>
+            <p class="eyebrow">What makes us different</p>
             <h2 id="facts-demo-h" class="section__title">A label that tells you what the product asks of you</h2>
             <p>Most shops list size and colour. We list what matters to your body: the hands and grip it needs, the effort to use it, how long setup takes, and whether it depends on sight or hearing.</p>
             <p>Every product on the site has one, in the same order, so you can compare.</p>
-            <p><a class="btn btn--ghost" href="/shop">Browse products</a></p>
+            <p><a class="btn btn--buy" href="/shop">Browse products</a></p>
           </div>
           ${sample ? factsPanel(sample, { headingLevel: 3, id: 'sample-facts' }) : ''}
         </div>
@@ -60,11 +68,23 @@ export function shopRoutes(app) {
 
       <section class="section" aria-labelledby="picks-h">
         <div class="wrap">
-          <h2 id="picks-h" class="section__title">Our picks</h2>
-          <ul class="grid">${featured.map((p) => productCard(p, 3))}</ul>
-          <p class="center"><a class="btn" href="/shop">See all products</a></p>
+          <div class="section__head-row">
+            <div><p class="eyebrow">Editor's picks</p><h2 id="picks-h" class="section__title">Our picks</h2></div>
+            <a class="btn btn--ghost" href="/shop">See all ${listProducts(ctx.db).length} products →</a>
+          </div>
+          <ul class="grid grid--shop">${featured.slice(0, 4).map((p) => productCard(ctx, p, 3))}</ul>
         </div>
       </section>
+
+      ${newIn.length ? html`<section class="section section--tint" aria-labelledby="new-h">
+        <div class="wrap">
+          <div class="section__head-row">
+            <div><p class="eyebrow">Just added</p><h2 id="new-h" class="section__title">More to explore</h2></div>
+            <a class="btn btn--ghost" href="/shop">See all products →</a>
+          </div>
+          <ul class="grid grid--shop">${newIn.map((p) => productCard(ctx, p, 3))}</ul>
+        </div>
+      </section>` : ''}
 
       <section class="section section--ink" aria-labelledby="promise-h">
         <div class="wrap">
@@ -127,7 +147,7 @@ export function shopRoutes(app) {
         <div class="results">
           <h2 id="results" tabindex="-1">${products.length} ${products.length === 1 ? 'product' : 'products'}${active.length ? html`<span class="results__for"> for ${active.join(', ')}</span>` : ''}</h2>
           ${products.length
-            ? html`<ul class="grid grid--shop">${products.map((p) => productCard(p, 3))}</ul>`
+            ? html`<ul class="grid grid--shop">${products.map((p) => productCard(ctx, p, 3))}</ul>`
             : html`<div class="empty"><p><strong>Nothing matches all of those.</strong></p><p>Try removing a “Must have” box, or <a href="/shop">clear the filters</a>. If you cannot find what you need, <a href="/help">ask us</a>. We can often source it.</p></div>`}
         </div>
       </div>`,
@@ -159,7 +179,7 @@ export function shopRoutes(app) {
               <label for="f-qty">Quantity</label>
               <input id="f-qty" name="qty" type="number" value="1" min="1" max="${maxQty}" inputmode="numeric" autocomplete="off">
             </div>
-            <button class="btn btn--big" type="submit">Add to cart</button>
+            <button class="btn btn--buy btn--big" type="submit">Add to cart</button>
           </form>` : ''}
           ${traitList(p.traits)}
           <p class="fineprint">${ctx.config.returnDays}-day returns. If it does not work for your body, send it back and we pay the postage.</p>
@@ -180,7 +200,7 @@ export function shopRoutes(app) {
           <ul class="chips">${p.needs.map((n) => html`<li><a href="/shop?need=${n}">${NEED_BY_ID.get(n)?.label ?? n}</a></li>`)}</ul>
         </section>
       </div>
-      ${related.length ? html`<section class="section section--tint" aria-labelledby="rel-h"><div class="wrap"><h2 id="rel-h" class="section__title">More in ${CATEGORY_BY_ID.get(p.category)?.label}</h2><ul class="grid">${related.map((r) => productCard(r, 3))}</ul></div></section>` : ''}`,
+      ${related.length ? html`<section class="section section--tint" aria-labelledby="rel-h"><div class="wrap"><h2 id="rel-h" class="section__title">More in ${CATEGORY_BY_ID.get(p.category)?.label}</h2><ul class="grid">${related.map((r) => productCard(ctx, r, 3))}</ul></div></section>` : ''}`,
     }));
   });
 
@@ -225,7 +245,7 @@ export function shopRoutes(app) {
           <aside class="summary" aria-labelledby="sum-h">
             <h2 id="sum-h">Order summary</h2>
             ${summaryRows(t, ctx.config)}
-            <a class="btn btn--big btn--block" href="/checkout">Go to checkout</a>
+            <a class="btn btn--buy btn--big btn--block" href="/checkout">Go to checkout</a>
             <p class="fineprint">You do not need an account to check out.</p>
           </aside>`
         : html`<div class="empty"><p><strong>Your cart is empty.</strong></p><p><a class="btn" href="/shop">Browse the shop</a></p></div>`}

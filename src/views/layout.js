@@ -1,10 +1,16 @@
 import { html, raw } from '../lib/html.js';
 import { glyph } from './glyphs.js';
+import { CATEGORIES } from '../catalog.js';
 
 const LOGO = raw(`<svg class="logo" width="44" height="44" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
   <circle class="logo__ring" cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="4"/>
   <path class="logo__hand" d="M14 34c0-8 2-12 5-12 1 0 1 2 1 4V13a2 2 0 0 1 4 0v11l1-9a2 2 0 0 1 4 0v9l1-6a2 2 0 0 1 4 0v10c0 7-4 11-10 11-6 0-10-3-10-9z" fill="currentColor"/>
 </svg>`);
+
+const CAT_GLYPH = {
+  kitchen: 'cup', dressing: 'sock', bathroom: 'sponge', mobility: 'cane', home: 'lever',
+  hearing: 'bell', vision: 'magnifier', tech: 'plug', memory: 'timer', comms: 'board', calm: 'earmuffs',
+};
 
 const nav = (ctx, href, label, match) => {
   const current = match ? match.test(ctx.path) : ctx.path === href;
@@ -39,27 +45,39 @@ export function layout(ctx, { title, main, description = '', robots = '', bodyCl
 </head>
 <body class="${bodyClass}">
   <a class="skip-link" href="#main">Skip to main content</a>
+  <p class="promo-bar">
+    <span class="wrap promo-bar__row">
+      <span><strong>Free delivery</strong> over ${new Intl.NumberFormat('en-US', { style: 'currency', currency: ctx.config.currency, maximumFractionDigits: 0 }).format(ctx.config.freeShippingOverCents / 100)}</span>
+      <span><strong>${ctx.config.returnDays}-day returns</strong>, we pay the postage</span>
+      <span><strong>Access Facts</strong> on every single product</span>
+    </span>
+  </p>
   <header class="site-header">
     <div class="wrap site-header__row">
       <a class="brand" href="/" aria-label="Within Reach, home">${LOGO}<span class="brand__name">Within&nbsp;Reach</span></a>
+      <form class="site-search" role="search" action="/shop" method="get">
+        <label for="site-q" class="sr-only">Search the shop</label>
+        <div class="site-search__row">
+          <input id="site-q" type="search" name="q" value="${q}" maxlength="80" autocomplete="off" enterkeyhint="search" placeholder="Search products…">
+          <button class="btn btn--buy btn--small" type="submit">${glyph('magnifier', { size: 18, cls: 'btn__icon', width: 7 })}<span class="sr-only">Search</span><span aria-hidden="true">Search</span></button>
+        </div>
+      </form>
       <nav class="site-nav" aria-label="Main">
         <ul>
-          ${nav(ctx, '/shop', 'Shop', /^\/(shop|product)/)}
           ${nav(ctx, '/help', 'Help')}
-          ${nav(ctx, '/display', 'Display settings')}
-          ${user ? nav(ctx, '/account', 'My account', /^\/(account|order)/) : nav(ctx, '/login', 'Sign in', /^\/(login|register)/)}
+          ${nav(ctx, '/display', 'Display')}
+          ${user ? nav(ctx, '/account', 'Account', /^\/(account|order)/) : nav(ctx, '/login', 'Sign in', /^\/(login|register)/)}
           ${user?.role === 'admin' ? nav(ctx, '/admin', 'Admin', /^\/admin/) : ''}
           <li><a class="cart-link" href="/cart" ${/^\/cart/.test(ctx.path) ? raw('aria-current="page"') : ''}>${glyph('cart', { size: 26, cls: 'cart-link__icon', width: 6 })}<span>Cart<span class="sr-only">, ${count} ${count === 1 ? 'item' : 'items'}</span></span><span class="cart-link__count" aria-hidden="true">${count}</span></a></li>
         </ul>
       </nav>
-      <form class="site-search" role="search" action="/shop" method="get">
-        <label for="site-q">Search the shop</label>
-        <div class="site-search__row">
-          <input id="site-q" type="search" name="q" value="${q}" maxlength="80" autocomplete="off" enterkeyhint="search">
-          <button class="btn btn--small" type="submit">Search</button>
-        </div>
-      </form>
     </div>
+    <nav class="cat-strip" aria-label="Shop by category">
+      <ul class="wrap cat-strip__row">
+        <li><a href="/shop" ${ctx.path === '/shop' && !ctx.query.get('cat') ? raw('aria-current="page"') : ''}>All</a></li>
+        ${CATEGORIES.map((c) => html`<li><a href="/shop?cat=${c.id}" ${ctx.query.get('cat') === c.id ? raw('aria-current="page"') : ''}>${glyph(CAT_GLYPH[c.id] ?? 'button', { size: 18, cls: 'cat-strip__icon', width: 7 })}${c.label}</a></li>`)}
+      </ul>
+    </nav>
   </header>
 
   <div class="live" role="status" aria-live="polite" aria-atomic="true">${flash ? html`<div class="flash flash--${flash.kind === 'error' ? 'error' : 'ok'}"><div class="wrap"><span class="flash__label">${flash.kind === 'error' ? 'Problem:' : 'Done:'}</span> ${flash.text}</div></div>` : ''}</div>

@@ -70,7 +70,7 @@ export function checkoutRoutes(app) {
             <p class="hint">This is a demonstration store. No real payment is taken and no card details are ever asked for.</p>
           </fieldset>
 
-          <button class="btn btn--big" type="submit">Place order — ${money(t.total, ctx.config.currency)}</button>
+          <button class="btn btn--buy btn--big" type="submit">Place order — ${money(t.total, ctx.config.currency)}</button>
         </form>
 
         <aside class="summary" aria-labelledby="sum-h">
