@@ -1,4 +1,20 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { NEED_BY_ID, TRAIT_BY_ID, CATEGORY_BY_ID, SORTS } from './catalog.js';
+
+const PHOTO_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'public', 'img', 'products');
+const photoCache = new Map();
+
+/** A photo dropped in as public/img/products/<slug>.(webp|jpg|jpeg|png|avif) is picked up with no database change. */
+export function photoFor(slug, explicit = '') {
+  if (explicit) return explicit;
+  if (!photoCache.has(slug)) {
+    const ext = ['webp', 'jpg', 'jpeg', 'png', 'avif'].find((e) => fs.existsSync(path.join(PHOTO_DIR, `${slug}.${e}`)));
+    photoCache.set(slug, ext ? `/img/products/${slug}.${ext}` : '');
+  }
+  return photoCache.get(slug);
+}
 
 function hydrate(db, rows) {
   if (!rows.length) return rows;
@@ -6,7 +22,7 @@ function hydrate(db, rows) {
   const tags = db.prepare(`SELECT product_id, kind, value FROM product_tags WHERE product_id IN (${ids.map(() => '?').join(',')})`).all(...ids);
   const byProduct = new Map(rows.map((r) => [r.id, { needs: [], traits: [] }]));
   for (const t of tags) byProduct.get(t.product_id)[t.kind === 'need' ? 'needs' : 'traits'].push(t.value);
-  return rows.map((r) => ({ ...r, ...byProduct.get(r.id), facts: JSON.parse(r.facts) }));
+  return rows.map((r) => ({ ...r, ...byProduct.get(r.id), facts: JSON.parse(r.facts), image: photoFor(r.slug, r.image) }));
 }
 
 const escapeLike = (s) => s.replace(/[\\%_]/g, (c) => `\\${c}`);
@@ -59,7 +75,7 @@ export function getProductsById(db, ids) {
 
 export function cartLines(db, sessionHash) {
   const rows = db.prepare(`SELECT p.*, c.qty FROM cart_items c JOIN products p ON p.id = c.product_id WHERE c.session_hash = ? ORDER BY p.name COLLATE NOCASE`).all(sessionHash);
-  return rows.map((r) => ({ ...r, facts: JSON.parse(r.facts), lineCents: r.price_cents * r.qty }));
+  return rows.map((r) => ({ ...r, facts: JSON.parse(r.facts), image: photoFor(r.slug, r.image), lineCents: r.price_cents * r.qty }));
 }
 
 export function totals(lines, config) {

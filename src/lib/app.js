@@ -10,7 +10,7 @@ import { isRaw } from './html.js';
 const MAX_BODY = 64 * 1024;
 const MIME = {
   '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.woff2': 'font/woff2',
-  '.svg': 'image/svg+xml', '.txt': 'text/plain; charset=utf-8', '.ico': 'image/x-icon', '.png': 'image/png',
+  '.svg': 'image/svg+xml', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.avif': 'image/avif', '.txt': 'text/plain; charset=utf-8', '.ico': 'image/x-icon', '.png': 'image/png',
   '.webmanifest': 'application/manifest+json',
 };
 
