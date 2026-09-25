@@ -1,6 +1,17 @@
 # Operations
 
-## Fastest path to a live URL: Render
+## Vercel
+
+ wraps the same request handler as  as a single Vercel function, configured by
+ (one service, every path rewritten to it). Deploy with . Serverless
+caveats: SQLite lives in the function's , is re-seeded on cold start and is per-instance, so carts,
+sessions and orders are lost when Vercel recycles or scales the function. Set  as a project
+env var or the admin password is random per cold start (it is printed to the function logs). Vercel
+Authentication is on by default for team projects: turn it off under Project Settings, Deployment
+Protection, for the site to be public. For real orders use a host with a persistent disk, or swap SQLite for
+a hosted database.
+
+## Render (one-click)
 
 The repo ships a `render.yaml` (a [Render Blueprint](https://render.com/docs/blueprint-spec)) that deploys
 this app with one click — see the "Deploy to Render" button in the README. It provisions a free web

@@ -2,9 +2,8 @@
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/cutewizzy11/within-reach)
 
-**Live demo:** not deployed yet — click the button above to spin up your own free instance on Render
-(deploys `render.yaml`; nothing to configure). Once it's running, replace this line with your instance's
-URL. See [docs/OPERATIONS.md](docs/OPERATIONS.md) for other hosts.
+**Live demo:** https://within-reach-xi.vercel.app (Vercel; demo data resets whenever the serverless function
+recycles, see [docs/OPERATIONS.md](docs/OPERATIONS.md)). Prefer your own copy? The button above deploys it on Render.
 
 An accessible e-commerce storefront for adaptive and assistive everyday products — built to be genuinely
 usable by people with vision, hearing, mobility, dexterity, speech, cognitive and sensory-processing

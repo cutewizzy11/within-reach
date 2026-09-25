@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "services": {
+    "within-reach": { "root": ".", "entrypoint": "api/index.js" }
+  },
+  "rewrites": [
+    { "source": "/(.*)", "destination": { "type": "service", "service": "within-reach" } }
+  ]
+}
