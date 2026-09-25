@@ -9,6 +9,8 @@ Guidance
 - 1200 px on the long edge is plenty; keep files under about 150 KB (WebP/AVIF).
 - The image is decorative (empty alt): the name, price and Access Facts beside it carry the information, so make
   sure the photo does not contradict the Access Facts (hands needed, grip, size).
+- Every photo needs an entry in `src/photo-credits.js` (author, source page, licence); a test fails without it, and
+  `/credits` lists them. CC BY / CC BY-SA photos legally require this credit.
 - Check the licence. Free-plan AI output is often watermarked and/or personal-use only; stock photos need
   attribution or a compatible licence. Only commit images you have the right to publish.
 - On Vercel, photos must be listed in `api/index.js` (the `__vercelTrace` block) so they are bundled.

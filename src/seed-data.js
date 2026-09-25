@@ -112,7 +112,7 @@ export const PRODUCTS = [
     slug: 'talking-pill-organizer', name: 'Talking Pill Organizer', category: 'memory', glyph: 'pills', tone: 'sage', price: 4200, stock: 20, featured: 1,
     tagline: 'Lights up, says it is time, and shows what to take.',
     easy: 'When it is time for a dose, the right box lights up and a voice tells you. Boxes open with a light push.',
-    description: 'Seven days by four times a day. At each set time the correct compartment lights and a voice reminder plays. Lids open with a push button, not a fingernail. Set times by voice menu or the big buttons. Not a medical device: it cannot check that you took the right medicine.',
+    description: 'Seven compartments, Sunday to Saturday, each with a large day letter. At the set time the correct compartment lights and a voice reminder plays. Lids open with a push button, not a fingernail. Set times by voice menu or the big buttons. Not a medical device: it cannot check that you took the right medicine.',
     needs: ['cognitive', 'vision', 'dexterity'], traits: ['audio', 'flash', 'tactile', 'low-grip'],
     facts: F('One hand', 'Light button push', '410 g', 'Set the times (10 min, helper useful)', [['Reminders', 'Voice and light'], ['Battery', '3 AA, about 6 months']]),
   },

@@ -309,8 +309,9 @@ textarea { resize: vertical; }
 .plate__art svg { width: 100%; height: 100%; filter: drop-shadow(0 6px 5px color-mix(in srgb, var(--tone-fg) 22%, transparent)); }
 .plate__art svg [fill="currentColor"] { fill: currentColor; }
 .plate__floor { position: absolute; left: 22%; right: 22%; bottom: 13%; height: 7%; border-radius: 50%; background: color-mix(in srgb, var(--tone-fg) 26%, transparent); filter: blur(5px); }
-.plate img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 2; }
-:root[data-theme="dark"] .plate, :root[data-theme="contrast-dark"] .plate { background: var(--tone-bg); }
+.plate--photo { background: #ffffff; }
+.plate--photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+:root[data-theme="dark"] .plate:not(.plate--photo), :root[data-theme="contrast-dark"] .plate:not(.plate--photo) { background: var(--tone-bg); }
 
 /* ---------------------------------------------------------------------------------- cards & grids */
 .grid { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); gap: 1rem; }

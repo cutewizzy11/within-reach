@@ -126,6 +126,7 @@ export function layout(ctx, { title, main, description = '', robots = '', bodyCl
         <ul>
           <li><a href="/accessibility">Accessibility statement</a></li>
           <li><a href="/privacy">Privacy and your data</a></li>
+          <li><a href="/credits">Photo credits</a></li>
           <li><a href="/.well-known/security.txt">Report a security problem</a></li>
         </ul>
       </nav>

@@ -79,3 +79,15 @@ test('photoFor picks up a photo dropped in by slug, prefers an explicit path, an
   assert.equal(photoFor('zz-no-such-photo'), '');
   assert.equal(photoFor('zz-no-such-photo', '/img/custom.jpg'), '/img/custom.jpg');
 });
+
+test('every product photo has a recorded credit and licence, and every credit has a photo', async () => {
+  const { PHOTO_CREDITS } = await import('../src/photo-credits.js');
+  const dir = fileURLToPath(new URL('../public/img/products/', import.meta.url));
+  const photos = fs.readdirSync(dir).filter((f) => /.(webp|jpe?g|png|avif)$/i.test(f)).sort();
+  const credited = Object.values(PHOTO_CREDITS).map((c) => c.file).sort();
+  assert.deepEqual(photos, credited);
+  for (const [slug, c] of Object.entries(PHOTO_CREDITS)) {
+    assert.ok(c.file.startsWith(slug + '.'), slug + ': file name must be the product slug');
+    for (const k of ['author', 'source', 'page', 'license', 'licenseUrl']) assert.ok(c[k], slug + ': missing ' + k);
+  }
+});

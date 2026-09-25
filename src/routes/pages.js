@@ -1,5 +1,7 @@
 import { html } from '../lib/html.js';
 import { layout, pageHead } from '../views/layout.js';
+import { PHOTO_CREDITS } from '../photo-credits.js';
+import { CATEGORY_BY_ID } from '../catalog.js';
 
 export function pageRoutes(app) {
   app.get('/help', (ctx) => {
@@ -86,6 +88,19 @@ export function pageRoutes(app) {
       </ul>
       <h2>Cookies</h2>
       <p>We use two kinds of cookie, both strictly necessary: one to remember your session and cart, and one to remember your display settings. Neither is used for tracking or advertising, so no cookie banner is shown.</p>
+    </div>`,
+  })));
+
+  app.get('/credits', (ctx) => ctx.page(200, layout(ctx, {
+    title: 'Photo credits',
+    description: 'Who took the product photos, where they come from and under which licence.',
+    main: html`
+    ${pageHead({ title: 'Photo credits', lede: 'Product photos are openly licensed. Where a photo shows a similar item rather than the exact product, the product page says what it does and does not show.' })}
+    <div class="wrap prose">
+      <ul>
+        ${Object.entries(PHOTO_CREDITS).map(([slug, c]) => html`<li><a href="/product/${slug}">${slug.replace(/-/g, ' ')}</a>: <a href="${c.page}" rel="noopener">“${c.title}”</a> by ${c.author} on ${c.source}, <a href="${c.licenseUrl}" rel="noopener">${c.license}</a>. ${c.note}</li>`)}
+      </ul>
+      <p>Products without a photo use an illustration until a suitable, correctly licensed photo is found.</p>
     </div>`,
   })));
 

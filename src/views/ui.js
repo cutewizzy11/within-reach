@@ -82,7 +82,9 @@ export const traitList = (traits, limit = 99) => html`<ul class="traits" aria-la
  * Studio-style product tile. If a product has a real photo (products.image, a path under /public), it is layered
  * over the illustrated fallback. The image is decorative (alt="") because the product name always sits next to it.
  */
-export const plate = (p) => html`<div class="plate tone-${p.tone}"><span class="plate__floor" aria-hidden="true"></span><span class="plate__art">${glyph(p.glyph, { size: 96, width: 3.6 })}</span>${p.image ? html`<img src="${p.image}" alt="" loading="lazy">` : ''}</div>`;
+export const plate = (p) => (p.image
+  ? html`<div class="plate plate--photo"><img src="${p.image}" alt="" loading="lazy"></div>`
+  : html`<div class="plate tone-${p.tone}"><span class="plate__floor" aria-hidden="true"></span><span class="plate__art">${glyph(p.glyph, { size: 96, width: 3.6 })}</span></div>`);
 
 export function stockNote(p) {
   if (p.stock <= 0) return html`<p class="stock stock--out">Out of stock. <a href="/help">Ask us to tell you when it is back.</a></p>`;
