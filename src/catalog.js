@@ -26,18 +26,18 @@ export const CATEGORIES = [
 ];
 
 export const TRAITS = [
-  { id: 'one-hand',   label: 'One-handed',           help: 'Can be used with one hand.' },
-  { id: 'low-grip',   label: 'No tight grip needed', help: 'Works with a light touch, a press or a whole-hand push.' },
-  { id: 'tactile',    label: 'Tactile markings',     help: 'Raised or textured markings you can find by touch.' },
-  { id: 'audio',      label: 'Speaks aloud',         help: 'Gives spoken feedback.' },
-  { id: 'big-print',  label: 'Large print',          help: 'Large, high-contrast text or symbols.' },
-  { id: 'voice',      label: 'Voice control',        help: 'Can be controlled by voice.' },
-  { id: 'flash',      label: 'Flashing light alert', help: 'Uses light instead of, or as well as, sound.' },
-  { id: 'vibrate',    label: 'Vibrating alert',      help: 'Uses vibration instead of, or as well as, sound.' },
-  { id: 'lightweight',label: 'Lightweight',          help: 'Easy to lift and carry.' },
-  { id: 'no-setup',   label: 'No setup',             help: 'Ready to use straight from the box.' },
-  { id: 'calm',       label: 'Quiet and calm',       help: 'No sudden sounds or bright flashes.' },
-  { id: 'pictures',   label: 'Picture-based',        help: 'Uses pictures or symbols, not just words.' },
+  { id: 'one-hand', phrase: 'one-handed',   label: 'One-handed',           help: 'Can be used with one hand.' },
+  { id: 'low-grip', phrase: 'easy on a weak grip',   label: 'No tight grip needed', help: 'Works with a light touch, a press or a whole-hand push.' },
+  { id: 'tactile', phrase: 'marked by touch',    label: 'Tactile markings',     help: 'Raised or textured markings you can find by touch.' },
+  { id: 'audio', phrase: 'able to talk',      label: 'Speaks aloud',         help: 'Gives spoken feedback.' },
+  { id: 'big-print', phrase: 'in large print',  label: 'Large print',          help: 'Large, high-contrast text or symbols.' },
+  { id: 'voice', phrase: 'voice-controlled',      label: 'Voice control',        help: 'Can be controlled by voice.' },
+  { id: 'flash', phrase: 'alerting by light',      label: 'Flashing light alert', help: 'Uses light instead of, or as well as, sound.' },
+  { id: 'vibrate', phrase: 'alerting by vibration',    label: 'Vibrating alert',      help: 'Uses vibration instead of, or as well as, sound.' },
+  { id: 'lightweight', phrase: 'light to lift',label: 'Lightweight',          help: 'Easy to lift and carry.' },
+  { id: 'no-setup', phrase: 'ready out of the box',   label: 'No setup',             help: 'Ready to use straight from the box.' },
+  { id: 'calm', phrase: 'quiet and calm',       label: 'Quiet and calm',       help: 'No sudden sounds or bright flashes.' },
+  { id: 'pictures', phrase: 'picture-based',   label: 'Picture-based',        help: 'Uses pictures or symbols, not just words.' },
 ];
 
 export const TONES = ['sun', 'sky', 'rose', 'persimmon', 'sage', 'forest'];

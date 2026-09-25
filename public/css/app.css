@@ -527,3 +527,59 @@ textarea { resize: vertical; }
 .prose h2 { margin-top: 1.5em; }
 .prose section { margin-bottom: 0.5rem; }
 .lede { font-size: 1.1em; color: var(--ink-soft); }
+
+/* ---------------------------------------------------------------------------------- signature details */
+/* Braille field behind the hero: raised dots are brighter than the empty cell positions. */
+.tile--hero {
+  background-image:
+    radial-gradient(circle at 18px 14px, rgba(255,255,255,0.22) 4px, transparent 4.6px),
+    radial-gradient(circle at 42px 14px, rgba(255,255,255,0.07) 1.8px, transparent 2.3px),
+    radial-gradient(circle at 18px 40px, rgba(255,255,255,0.07) 1.8px, transparent 2.3px),
+    radial-gradient(circle at 42px 40px, rgba(255,255,255,0.22) 4px, transparent 4.6px),
+    radial-gradient(circle at 18px 66px, rgba(255,255,255,0.22) 4px, transparent 4.6px),
+    radial-gradient(circle at 42px 66px, rgba(255,255,255,0.07) 1.8px, transparent 2.3px);
+  background-size: 64px 84px;
+}
+:root[data-calm="on"] .tile--hero { background-image: none; }
+
+/* Hand-drawn underline under the headline's key words. */
+.scribble { padding-bottom: 0.14em; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'%3E%3Cpath d='M2 8C40 2 80 12 120 5S190 9 198 4' fill='none' stroke='%23ff6a4d' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat left bottom / 100% 0.32em; }
+:root[data-calm="on"] .scribble { background: none; text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px; }
+
+/* The sentence search: "Find me something for [seeing] that is [one-handed]". */
+.sentence { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.65rem; background: var(--surface); color: var(--ink); border-radius: 18px; padding: 0.9rem 1rem; margin: 1rem 0 0.9rem; box-shadow: var(--shadow-lift); }
+.sentence label { margin: 0; font-weight: 700; color: var(--ink); }
+.sentence select { width: auto; max-width: 100%; font-weight: 700; color: var(--brand); border-color: var(--brand); padding: 0.4em 0.6em; background: var(--surface); }
+.sentence .btn { margin-left: auto; }
+.tile--hero .sentence .btn--buy { color: var(--cta-ink); }
+
+/* Mini Access Facts label on every product card. */
+.strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0.45rem 0 0.2rem; border: 2px solid var(--ink); border-radius: 10px; overflow: hidden; background: var(--surface); }
+.strip::before { content: "Access Facts"; grid-column: 1 / -1; background: var(--ink); color: var(--bg); font-size: 0.66em; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; padding: 0.18rem 0.5rem; }
+.strip div { padding: 0.3rem 0.5rem 0.4rem; border-left: 1px solid var(--line); min-width: 0; }
+.strip div:first-of-type { border-left: 0; }
+.strip dt { font-size: 0.64em; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+.strip dd { margin: 0; font-size: 0.8em; font-weight: 700; line-height: 1.2; overflow-wrap: anywhere; }
+
+/* Sticker-style ribbons. */
+.ribbon { transform: rotate(-3deg); box-shadow: 0 2px 0 rgba(15,23,51,0.28); }
+.ribbon--pick { outline: 2px dashed rgba(255,255,255,0.75); outline-offset: -4px; padding: 0.3em 0.85em; }
+:root[data-calm="on"] .ribbon { transform: none; box-shadow: none; }
+
+/* Ripples of reach behind page headers. */
+.page-head { position: relative; overflow: hidden; }
+.page-head .wrap { position: relative; z-index: 1; }
+.page-head::after { content: ""; position: absolute; right: -7rem; top: -8rem; width: 24rem; height: 24rem; border-radius: 50%; pointer-events: none; background: repeating-radial-gradient(circle, transparent 0 1.6rem, color-mix(in srgb, var(--brand) 20%, transparent) 1.6rem 1.7rem); }
+:root[data-calm="on"] .page-head::after { display: none; }
+
+/* Footer sign-off. */
+.signoff { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap; padding-top: 1.5rem; padding-bottom: 1.5rem; border-top: 1px solid var(--line); }
+.signoff__big { font-family: var(--font-display); font-weight: 700; font-size: 2.4em; line-height: 1; margin: 0; letter-spacing: -0.02em; }
+.signoff__sub { margin: 0.35em 0 0; color: var(--ink-soft); }
+.signoff__braille { margin: 0; text-align: center; }
+.signoff__braille figcaption { font-size: 0.8em; color: var(--ink-soft); margin-top: 0.2em; }
+.braille .on { fill: var(--brand); }
+.braille .off { fill: var(--line-strong); }
+.strip { grid-template-columns: 0.85fr 1.3fr 1fr; }
+.strip dd { font-size: 0.76em; overflow-wrap: break-word; word-break: normal; hyphens: auto; }
+.strip { grid-template-columns: 0.75fr 1.1fr 1.25fr; }

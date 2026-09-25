@@ -1,5 +1,6 @@
 import { html, raw } from '../lib/html.js';
 import { glyph } from './glyphs.js';
+import { braille } from './art.js';
 import { CATEGORIES, NEEDS } from '../catalog.js';
 
 const LOGO = raw(`<svg class="logo" width="40" height="40" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
@@ -141,6 +142,13 @@ export function layout(ctx, { title, main, description = '', robots = '', bodyCl
               <li><a href="/.well-known/security.txt">Report a security problem</a></li>
             </ul>
           </nav>
+        </div>
+        <div class="wrap signoff">
+          <div>
+            <p class="signoff__big">Within reach.</p>
+            <p class="signoff__sub">Everyday things that fit you.</p>
+          </div>
+          <figure class="signoff__braille">${braille('reach')}<figcaption>“Reach”, in braille.</figcaption></figure>
         </div>
         <div class="wrap footer-legal">Demo store: the catalogue is fictional and no payment is ever taken.</div>
       </footer>

@@ -83,6 +83,11 @@ export const traitList = (traits, limit = 99) => html`<ul class="traits" aria-la
  * Studio-style product tile. If a product has a real photo (products.image, a path under /public), it is layered
  * over the illustrated fallback. The image is decorative (alt="") because the product name always sits next to it.
  */
+// Mini Access Facts label for cards: hands, effort and setup, trimmed to the first phrase of each fact.
+const shorten = (v) => String(v).split(/ \(|, | — |\. /)[0].trim();
+const factValue = (p, key) => p.facts.find(([k]) => k === key)?.[1] ?? '';
+export const accessStrip = (p) => html`<dl class="strip" aria-label="Access Facts at a glance">${[['Hands', 'Hands needed'], ['Effort', 'Effort to use'], ['Setup', 'Setup']].map(([label, key]) => html`<div><dt>${label}</dt><dd>${shorten(factValue(p, key)) || 'n/a'}</dd></div>`)}</dl>`;
+
 export const plate = (p) => (p.image
   ? html`<div class="plate plate--photo"><img src="${p.image}" alt="" loading="lazy"></div>`
   : html`<div class="plate tone-${p.tone}"><span class="plate__floor" aria-hidden="true"></span><span class="plate__art">${art(p.glyph)}</span></div>`);
@@ -112,7 +117,7 @@ export function productCard(ctx, p, headingLevel = 3) {
       <p class="card__cat">${cat}</p>
       ${raw(`<${h} class="card__title">`)}<a href="/product/${p.slug}">${p.name}</a>${raw(`</${h}>`)}
       <p class="card__tag">${p.tagline}</p>
-      ${traitList(p.traits, 3)}
+      ${accessStrip(p)}
       <div class="card__foot">
         <p class="price">${money(p.price_cents)}</p>
         ${p.stock > 0 ? html`<form action="/cart/add" method="post" class="quick-add">

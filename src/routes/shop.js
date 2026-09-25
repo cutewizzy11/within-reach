@@ -43,9 +43,16 @@ export function shopRoutes(app) {
         <div class="bento">
           <section class="tile tile--hero" aria-labelledby="hero-h">
             <p class="eyebrow">Adaptive products, honestly described</p>
-            <h1 id="hero-h">Everyday things that fit you</h1>
+            <h1 id="hero-h">Everyday things that <span class="scribble">fit you</span></h1>
             <p>Every product has an <strong>Access Facts</strong> label: hands needed, effort, setup time and what senses it depends on. You know it will work for your body before you buy.</p>
-            <p class="btn-row"><a class="btn btn--buy btn--big" href="/shop">Shop all ${all.length} products</a><a class="btn btn--ghost btn--big" href="#needs">Find what helps</a></p>
+            <form class="sentence" action="/shop" method="get">
+              <label for="ss-need">Find me something for</label>
+              <select id="ss-need" name="need"><option value="">anything</option>${NEEDS.map((n) => html`<option value="${n.id}">${n.label.toLowerCase()}</option>`)}</select>
+              <label for="ss-trait">that is</label>
+              <select id="ss-trait" name="trait"><option value="">any kind</option>${TRAITS.map((t) => html`<option value="${t.id}">${t.phrase}</option>`)}</select>
+              <button class="btn btn--buy" type="submit">Show me</button>
+            </form>
+            <p class="btn-row"><a class="btn btn--ghost" href="/shop">Or browse all ${all.length} products</a></p>
             <div class="orbit" aria-hidden="true">
               ${featured.slice(0, 3).map((p, i) => html`<span class="orbit__item orbit__item--${i + 1} tone-${p.tone}">${art(p.glyph)}</span>`)}
             </div>
@@ -73,7 +80,7 @@ export function shopRoutes(app) {
         </section>
 
         <section class="section" aria-labelledby="picks-h">
-          <div class="section__head"><h2 id="picks-h">Editor's picks</h2><a class="section__more" href="/shop">See all products</a></div>
+          <div class="section__head"><h2 id="picks-h">Reach for these first</h2><a class="section__more" href="/shop">See all products</a></div>
           <ul class="grid">${featured.map((p) => productCard(ctx, p, 3))}</ul>
         </section>
 
@@ -90,7 +97,7 @@ export function shopRoutes(app) {
         </section>
 
         ${more.length ? html`<section class="section" aria-labelledby="more-h">
-          <div class="section__head"><h2 id="more-h">More to explore</h2><a class="section__more" href="/shop">See all products</a></div>
+          <div class="section__head"><h2 id="more-h">Still within reach</h2><a class="section__more" href="/shop">See all products</a></div>
           <ul class="grid">${more.map((p) => productCard(ctx, p, 3))}</ul>
         </section>` : ''}
 

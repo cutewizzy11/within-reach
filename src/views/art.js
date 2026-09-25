@@ -44,3 +44,28 @@ export const ART_NAMES = Object.keys(A);
 export function art(name, cls = 'art') {
   return raw(`<svg class="${cls}" viewBox="0 0 120 120" aria-hidden="true" focusable="false">${A[name] ?? A.button}</svg>`);
 }
+
+// Braille: standard six-dot cells (dot numbers 1-3 down the left column, 4-6 down the right). Used as a brand motif:
+// the home hero background and the footer sign-off spell out "reach". Decorative, so aria-hidden; the caption says what it is.
+const BRAILLE = {
+  a: [1], b: [1, 2], c: [1, 4], d: [1, 4, 5], e: [1, 5], f: [1, 2, 4], g: [1, 2, 4, 5], h: [1, 2, 5], i: [2, 4], j: [2, 4, 5],
+  k: [1, 3], l: [1, 2, 3], m: [1, 3, 4], n: [1, 3, 4, 5], o: [1, 3, 5], p: [1, 2, 3, 4], q: [1, 2, 3, 4, 5], r: [1, 2, 3, 5],
+  s: [2, 3, 4], t: [2, 3, 4, 5], u: [1, 3, 6], v: [1, 2, 3, 6], w: [2, 4, 5, 6], x: [1, 3, 4, 6], y: [1, 3, 4, 5, 6], z: [1, 3, 5, 6],
+};
+const DOT_POS = { 1: [0, 0], 2: [0, 1], 3: [0, 2], 4: [1, 0], 5: [1, 1], 6: [1, 2] };
+
+export function braille(word, cls = 'braille') {
+  const letters = [...String(word).toLowerCase()].filter((c) => BRAILLE[c]);
+  const cellW = 34;
+  const w = letters.length * cellW;
+  const cells = letters.map((ch, i) => {
+    const raised = new Set(BRAILLE[ch]);
+    const dots = Object.entries(DOT_POS).map(([n, [cx, cy]]) => {
+      const x = i * cellW + 8 + cx * 14;
+      const y = 8 + cy * 14;
+      return raised.has(Number(n)) ? `<circle class="on" cx="${x}" cy="${y}" r="5"/>` : `<circle class="off" cx="${x}" cy="${y}" r="1.8"/>`;
+    }).join('');
+    return `<g class="cell">${dots}</g>`;
+  }).join('');
+  return raw(`<svg class="${cls}" viewBox="0 0 ${w} 44" width="${w}" height="44" aria-hidden="true" focusable="false">${cells}</svg>`);
+}
