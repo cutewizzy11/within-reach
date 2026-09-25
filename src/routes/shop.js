@@ -1,6 +1,7 @@
 import { html, raw } from '../lib/html.js';
 import { layout, pageHead, CAT_GLYPH } from '../views/layout.js';
 import { glyph } from '../views/glyphs.js';
+import { art } from '../views/art.js';
 import { money, csrfField, productCard, plate, traitList, stockNote } from '../views/ui.js';
 import { NEEDS, CATEGORIES, TRAITS, SORTS, NEED_BY_ID, CATEGORY_BY_ID } from '../catalog.js';
 import { parseFilters, listProducts, getProduct, cartLines, totals } from '../models.js';
@@ -38,16 +39,28 @@ export function shopRoutes(app) {
       title: 'Everyday things that fit you',
       description: 'An online shop for adaptive and assistive products, described by how they work for your body.',
       main: html`
-      <div class="wrap home-top">
-        <section class="banner" aria-labelledby="hero-h">
-          <p class="eyebrow">Adaptive products, honestly described</p>
-          <h1 id="hero-h">Everyday things that fit you</h1>
-          <p>Every product has an <strong>Access Facts</strong> label: hands needed, effort, setup time and what senses it depends on. You know it will work for your body before you buy.</p>
-          <p class="btn-row"><a class="btn btn--buy btn--big" href="/shop">Shop all ${all.length} products</a><a class="btn btn--ghost btn--big" href="#needs">Find what helps</a></p>
-        </section>
-        <div class="side-tiles">
-          <a class="side-tile side-tile--accent" href="/help"><strong>Free delivery over ${freeOver}</strong><span>${ctx.config.returnDays}-day returns, and we pay the postage.</span></a>
-          <a class="side-tile" href="/display"><strong>Make this site fit you</strong><span>Text size, contrast, spacing, motion and a calm mode.</span></a>
+      <div class="wrap">
+        <div class="bento">
+          <section class="tile tile--hero" aria-labelledby="hero-h">
+            <p class="eyebrow">Adaptive products, honestly described</p>
+            <h1 id="hero-h">Everyday things that fit you</h1>
+            <p>Every product has an <strong>Access Facts</strong> label: hands needed, effort, setup time and what senses it depends on. You know it will work for your body before you buy.</p>
+            <p class="btn-row"><a class="btn btn--buy btn--big" href="/shop">Shop all ${all.length} products</a><a class="btn btn--ghost btn--big" href="#needs">Find what helps</a></p>
+            <div class="orbit" aria-hidden="true">
+              ${featured.slice(0, 3).map((p, i) => html`<span class="orbit__item orbit__item--${i + 1} tone-${p.tone}">${art(p.glyph)}</span>`)}
+            </div>
+          </section>
+          ${sample ? html`<section class="tile tile--facts" aria-labelledby="bf-h">
+            <p class="eyebrow">Access Facts</p>
+            <h2 id="bf-h">${sample.name}</h2>
+            <table class="facts__table">
+              <caption class="sr-only">Sample Access Facts for ${sample.name}</caption>
+              <tbody>${sample.facts.slice(0, 4).map(([k, v]) => html`<tr><th scope="row">${k}</th><td>${v}</td></tr>`)}</tbody>
+            </table>
+            <p><a href="/product/${sample.slug}">See the full label</a></p>
+          </section>` : ''}
+          <a class="tile tile--cta" href="/help"><h2>Free delivery over ${freeOver}</h2><p>${ctx.config.returnDays}-day returns, and we pay the postage.</p></a>
+          <a class="tile tile--display" href="/display"><h2>Make this site fit you</h2><p>Text size, contrast, spacing, motion and a calm mode, saved to your account.</p></a>
         </div>
       </div>
 
@@ -74,18 +87,6 @@ export function shopRoutes(app) {
               <span class="need__arrow" aria-hidden="true">Shop ${n.short.toLowerCase()} →</span>
             </a></li>`)}
           </ul>
-        </section>
-
-        <section class="section" aria-labelledby="facts-demo-h">
-          <div class="panel split">
-            <div>
-              <p class="eyebrow">What makes us different</p>
-              <h2 id="facts-demo-h">A label that says what the product asks of you</h2>
-              <p>Most shops list size and colour. We list what matters to your body, in the same order on every product, so you can compare at a glance.</p>
-              <p><a class="btn" href="/shop">Browse products</a></p>
-            </div>
-            ${sample ? factsPanel(sample, { headingLevel: 3, id: 'sample-facts' }) : ''}
-          </div>
         </section>
 
         ${more.length ? html`<section class="section" aria-labelledby="more-h">
@@ -191,6 +192,27 @@ export function shopRoutes(app) {
             <h1>${p.name}</h1>
             <p class="product__tagline">${p.tagline}</p>
             ${traitList(p.traits)}
+        <aside class="product__buy" aria-labelledby="buy-h">
+          <div class="buybox">
+            <h2 id="buy-h" class="sr-only">Buy ${p.name}</h2>
+            <p class="price price--big">${money(p.price_cents)}</p>
+            ${stockNote(p)}
+            ${p.stock > 0 ? html`<form action="/cart/add" method="post" class="buy-form">
+              ${csrfField(ctx)}
+              <input type="hidden" name="product" value="${p.id}">
+              <div class="field field--inline">
+                <label for="f-qty">Quantity</label>
+                <input id="f-qty" name="qty" type="number" value="1" min="1" max="${maxQty}" inputmode="numeric" autocomplete="off">
+              </div>
+              <button class="btn btn--buy btn--big btn--block" type="submit">Add to cart</button>
+            </form>` : ''}
+            <ul class="buybox__list">
+              <li>${glyph('truck', { size: 20, width: 6 })}<span>Free delivery over ${freeOver}. Easy-open packaging on request.</span></li>
+              <li>${glyph('returns', { size: 20, width: 6 })}<span>${ctx.config.returnDays}-day returns. If it does not work for your body, we pay the postage.</span></li>
+              <li>${glyph('chat', { size: 20, width: 6 })}<span>Questions? Text, email or phone. <a href="/help">Get help</a>.</span></li>
+            </ul>
+          </div>
+        </aside>
             <section class="easy" aria-labelledby="easy-h">
               <h2 id="easy-h">In plain words</h2>
               <p id="easy-text">${p.easy_read}</p>
@@ -203,28 +225,6 @@ export function shopRoutes(app) {
               <ul class="chips">${p.needs.map((n) => html`<li><a href="/shop?need=${n}">${NEED_BY_ID.get(n)?.label ?? n}</a></li>`)}</ul>
             </section>
           </div>
-
-          <aside class="product__buy" aria-labelledby="buy-h">
-            <div class="buybox">
-              <h2 id="buy-h" class="sr-only">Buy ${p.name}</h2>
-              <p class="price price--big">${money(p.price_cents)}</p>
-              ${stockNote(p)}
-              ${p.stock > 0 ? html`<form action="/cart/add" method="post" class="buy-form">
-                ${csrfField(ctx)}
-                <input type="hidden" name="product" value="${p.id}">
-                <div class="field field--inline">
-                  <label for="f-qty">Quantity</label>
-                  <input id="f-qty" name="qty" type="number" value="1" min="1" max="${maxQty}" inputmode="numeric" autocomplete="off">
-                </div>
-                <button class="btn btn--buy btn--big btn--block" type="submit">Add to cart</button>
-              </form>` : ''}
-              <ul class="buybox__list">
-                <li>${glyph('truck', { size: 20, width: 6 })}<span>Free delivery over ${freeOver}. Easy-open packaging on request.</span></li>
-                <li>${glyph('returns', { size: 20, width: 6 })}<span>${ctx.config.returnDays}-day returns. If it does not work for your body, we pay the postage.</span></li>
-                <li>${glyph('chat', { size: 20, width: 6 })}<span>Questions? Text, email or phone. <a href="/help">Get help</a>.</span></li>
-              </ul>
-            </div>
-          </aside>
         </div>
 
         <div class="product__lower">

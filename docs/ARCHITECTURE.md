@@ -19,9 +19,10 @@ src/
     validate.js           field validators, each returning a plain-language error string or null
     prefs.js               display-preference (theme/text size/spacing/motion) parsing, whitelisted
   views/
-    layout.js            <html> shell, header, footer, error page
+    layout.js            page shell: navy category rail (brand, cart, search, categories, needs) beside the stage; footer; error page
     ui.js                 reusable form controls, product card, Access Facts panel, money formatting
-    glyphs.js              SVG pictograms used for product tiles and icons (real photos can be layered on top via products.image)
+    glyphs.js              small line pictograms for icons (categories, needs, cart, ticks)
+    art.js                 filled two-tone product illustrations used on product tiles until a real photo exists
   routes/
     shop.js                home, shop listing + filters, product page, cart
     checkout.js             checkout form, order placement, order status page
@@ -31,7 +32,7 @@ src/
 public/
   css/app.css            the entire design system (tokens, components) — see docs/ACCESSIBILITY.md
   js/app.js                progressive-enhancement only; every feature works without it
-  fonts/                    Atkinson Hyperlegible, self-hosted (no third-party font requests)
+  fonts/                    Atkinson Hyperlegible (body) and Lexend (headings), self-hosted (no third-party font requests)
 test/                     node:test suite — templates, security primitives, models, full HTTP flows
 scripts/seed.js          CLI wrapper around src/seed.js
 ```

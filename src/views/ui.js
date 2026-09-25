@@ -1,5 +1,6 @@
 import { html, raw } from '../lib/html.js';
 import { glyph } from './glyphs.js';
+import { art } from './art.js';
 import { TRAIT_BY_ID, CATEGORY_BY_ID } from '../catalog.js';
 
 export function money(cents, currency = 'USD') {
@@ -84,7 +85,7 @@ export const traitList = (traits, limit = 99) => html`<ul class="traits" aria-la
  */
 export const plate = (p) => (p.image
   ? html`<div class="plate plate--photo"><img src="${p.image}" alt="" loading="lazy"></div>`
-  : html`<div class="plate tone-${p.tone}"><span class="plate__floor" aria-hidden="true"></span><span class="plate__art">${glyph(p.glyph, { size: 96, width: 3.6 })}</span></div>`);
+  : html`<div class="plate tone-${p.tone}"><span class="plate__floor" aria-hidden="true"></span><span class="plate__art">${art(p.glyph)}</span></div>`);
 
 export function stockNote(p) {
   if (p.stock <= 0) return html`<p class="stock stock--out">Out of stock. <a href="/help">Ask us to tell you when it is back.</a></p>`;

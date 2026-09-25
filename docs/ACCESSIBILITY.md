@@ -38,7 +38,7 @@ mode" toggle):
 | Colour and contrast | System, light, dark, high-contrast light, high-contrast dark |
 | Text size | Standard, large, extra large, huge |
 | Spacing | Standard, or roomy (wider line/word/letter spacing) |
-| Font | Atkinson Hyperlegible (designed for low vision) or the device's own font |
+| Font | Atkinson Hyperlegible body with Lexend headings (both designed to reduce reading strain), or the device's own font |
 | Motion | System, or fully reduced (no animation/transitions) |
 | Calm mode | Off, or a plainer look with fewer decorative elements |
 
@@ -57,7 +57,7 @@ focus rings and input borders). The two high-contrast themes use pure black and 
 - Stock status, form errors and order status are always paired with text and/or an icon, never colour alone.
 - Pictograms (`views/glyphs.js`) are decorative and `aria-hidden="true"` — the product name/label is always
   present as real text next to them, so nothing is conveyed by the icon alone.
-- Product tiles are illustrated pictograms by default. A product can carry a real photo (`products.image`, a path
+- Product tiles are filled illustrations by default (`views/art.js`, decorative and `aria-hidden`), coloured per product tone and toned down in calm mode. A product can carry a real photo (`products.image`, a path
   under `public/`); it is layered over the tile as a decorative `<img alt="">` because the name, price and
   Access Facts next to it carry the information. If you add photos, keep the Access Facts, not the photo, as the
   source of truth.

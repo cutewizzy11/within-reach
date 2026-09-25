@@ -23,8 +23,8 @@ if (globalThis.__vercelTrace) {
     new URL('../public/fonts/atkinson-hyperlegible-latin-400-normal.woff2', import.meta.url),
     new URL('../public/fonts/atkinson-hyperlegible-latin-400-italic.woff2', import.meta.url),
     new URL('../public/fonts/atkinson-hyperlegible-latin-700-normal.woff2', import.meta.url),
-    new URL('../public/fonts/fraunces-latin-600-normal.woff2', import.meta.url),
-    new URL('../public/fonts/fraunces-latin-800-normal.woff2', import.meta.url),
+    new URL('../public/fonts/lexend-latin-500-normal.woff2', import.meta.url),
+    new URL('../public/fonts/lexend-latin-700-normal.woff2', import.meta.url),
   ]) readFileSync(f);
 }
 
