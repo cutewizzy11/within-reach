@@ -143,9 +143,9 @@ class Ctx {
 
   csrf() { return this.requireSession().csrf; }
 
-  flash(kind, text) {
+  flash(kind, text, link) {
     const s = this.requireSession();
-    this.db.prepare('UPDATE sessions SET flash = ? WHERE id_hash = ?').run(JSON.stringify({ kind, text }), s.id_hash);
+    this.db.prepare('UPDATE sessions SET flash = ? WHERE id_hash = ?').run(JSON.stringify({ kind, text, link }), s.id_hash);
   }
 
   takeFlash() {

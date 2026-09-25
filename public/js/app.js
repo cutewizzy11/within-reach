@@ -32,6 +32,10 @@
     });
   }
 
+  // Filters start open (so they work without JS); fold them away on small screens to leave room for products.
+  const filters = document.querySelector('[data-filters]');
+  if (filters && window.matchMedia('(max-width: 900px)').matches) filters.removeAttribute('open');
+
   // Display settings: apply the chosen radio's data attributes live, before the form is submitted,
   // so people can see the effect immediately. The server-rendered page still works if JS is off.
   const prefsForm = document.querySelector('[data-prefs-form]');

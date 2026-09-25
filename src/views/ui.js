@@ -78,15 +78,19 @@ export const traitList = (traits, limit = 99) => html`<ul class="traits" aria-la
   ${traits.slice(0, limit).map((t) => html`<li>${glyph('check', { size: 16, cls: 'tick', width: 10 })}<span>${TRAIT_BY_ID.get(t)?.label ?? t}</span></li>`)}
 </ul>`;
 
-export const plate = (p, big = false) => html`<div class="plate tone-${p.tone} ${big ? 'plate--big' : ''}"><span class="plate__ring" aria-hidden="true"></span>${glyph(p.glyph, { size: big ? 160 : 92, width: big ? 4.5 : 5 })}</div>`;
+/**
+ * Studio-style product tile. If a product has a real photo (products.image, a path under /public), it is layered
+ * over the illustrated fallback. The image is decorative (alt="") because the product name always sits next to it.
+ */
+export const plate = (p) => html`<div class="plate tone-${p.tone}"><span class="plate__floor" aria-hidden="true"></span><span class="plate__art">${glyph(p.glyph, { size: 96, width: 3.6 })}</span>${p.image ? html`<img src="${p.image}" alt="" loading="lazy">` : ''}</div>`;
 
 export function stockNote(p) {
-  if (p.stock <= 0) return html`<p class="stock stock--out"><strong>Out of stock.</strong> Ask us to tell you when it is back on the <a href="/help">help page</a>.</p>`;
-  if (p.stock <= 5) return html`<p class="stock stock--low"><strong>Only ${p.stock} left</strong> at this price.</p>`;
-  return html`<p class="stock stock--in"><strong>In stock.</strong> Ships within 2 working days.</p>`;
+  if (p.stock <= 0) return html`<p class="stock stock--out">Out of stock. <a href="/help">Ask us to tell you when it is back.</a></p>`;
+  if (p.stock <= 5) return html`<p class="stock stock--low">Only ${p.stock} left in stock.</p>`;
+  return html`<p class="stock stock--in">In stock. Ships within 2 working days.</p>`;
 }
 
-/** Small ribbon shown in the top corner of a card: cheapest signal wins (out of stock > low stock > featured). */
+/** Corner ribbon on a card: out of stock beats low stock beats editor's pick. */
 function cardRibbon(p) {
   if (p.stock <= 0) return html`<span class="ribbon ribbon--out">Out of stock</span>`;
   if (p.stock <= 5) return html`<span class="ribbon ribbon--low">Only ${p.stock} left</span>`;
@@ -94,13 +98,11 @@ function cardRibbon(p) {
   return '';
 }
 
-/**
- * Product card with an inline "quick add" form (posts straight to /cart/add) so the shop grid works
- * like a shop, not a catalogue you have to click into for every single item.
- */
+/** Product card with an add-to-cart button that returns you to the page you were on (no detour to the cart). */
 export function productCard(ctx, p, headingLevel = 3) {
   const h = `h${headingLevel}`;
   const cat = CATEGORY_BY_ID.get(p.category)?.label ?? '';
+  const here = `${ctx.path}${ctx.url.search}`.slice(0, 200);
   return html`<li class="card">
     <a class="card__media" href="/product/${p.slug}" tabindex="-1" aria-hidden="true">${plate(p)}${cardRibbon(p)}</a>
     <div class="card__body">
@@ -114,8 +116,9 @@ export function productCard(ctx, p, headingLevel = 3) {
           ${csrfField(ctx)}
           <input type="hidden" name="product" value="${p.id}">
           <input type="hidden" name="qty" value="1">
-          <button class="btn btn--buy btn--small" type="submit">Add<span class="sr-only"> ${p.name} to cart</span></button>
-        </form>` : html`<a class="btn btn--ghost btn--small" href="/product/${p.slug}">Notify me</a>`}
+          <input type="hidden" name="next" value="${here}">
+          <button class="btn btn--buy btn--small" type="submit">Add to cart<span class="sr-only">: ${p.name}</span></button>
+        </form>` : html`<a class="btn btn--ghost btn--small" href="/product/${p.slug}">See details</a>`}
       </div>
     </div>
   </li>`;

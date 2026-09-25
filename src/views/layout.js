@@ -2,24 +2,21 @@ import { html, raw } from '../lib/html.js';
 import { glyph } from './glyphs.js';
 import { CATEGORIES } from '../catalog.js';
 
-const LOGO = raw(`<svg class="logo" width="44" height="44" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+const LOGO = raw(`<svg class="logo" width="40" height="40" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
   <circle class="logo__ring" cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="4"/>
   <path class="logo__hand" d="M14 34c0-8 2-12 5-12 1 0 1 2 1 4V13a2 2 0 0 1 4 0v11l1-9a2 2 0 0 1 4 0v9l1-6a2 2 0 0 1 4 0v10c0 7-4 11-10 11-6 0-10-3-10-9z" fill="currentColor"/>
 </svg>`);
 
-const CAT_GLYPH = {
+export const CAT_GLYPH = {
   kitchen: 'cup', dressing: 'sock', bathroom: 'sponge', mobility: 'cane', home: 'lever',
   hearing: 'bell', vision: 'magnifier', tech: 'plug', memory: 'timer', comms: 'board', calm: 'earmuffs',
 };
 
-const nav = (ctx, href, label, match) => {
-  const current = match ? match.test(ctx.path) : ctx.path === href;
-  return html`<li><a href="${href}" ${current ? raw('aria-current="page"') : ''}>${label}</a></li>`;
-};
+const money0 = (ctx, cents) => new Intl.NumberFormat('en-US', { style: 'currency', currency: ctx.config.currency, maximumFractionDigits: 0 }).format(cents / 100);
 
 /**
  * @param {import('../lib/app.js').Ctx} ctx
- * @param {{title:string, main:any, description?:string, wide?:boolean, robots?:string, bodyClass?:string}} page
+ * @param {{title:string, main:any, description?:string, robots?:string, bodyClass?:string}} page
  */
 export function layout(ctx, { title, main, description = '', robots = '', bodyClass = '' }) {
   const p = ctx.prefs();
@@ -29,6 +26,8 @@ export function layout(ctx, { title, main, description = '', robots = '', bodyCl
   const v = (f) => `/${f}?v=${ctx.app.static.version(f)}`;
   const support = ctx.config.support;
   const q = ctx.query.get('q') ?? '';
+  const activeCat = ctx.query.get('cat') ?? '';
+  const cur = (yes) => (yes ? raw('aria-current="page"') : '');
 
   return html`<!doctype html>
 <html lang="en" data-theme="${p.theme}" data-text="${p.text}" data-space="${p.space}" data-font="${p.font}" data-motion="${p.motion}" data-calm="${p.calm}">
@@ -45,42 +44,53 @@ export function layout(ctx, { title, main, description = '', robots = '', bodyCl
 </head>
 <body class="${bodyClass}">
   <a class="skip-link" href="#main">Skip to main content</a>
-  <p class="promo-bar">
-    <span class="wrap promo-bar__row">
-      <span><strong>Free delivery</strong> over ${new Intl.NumberFormat('en-US', { style: 'currency', currency: ctx.config.currency, maximumFractionDigits: 0 }).format(ctx.config.freeShippingOverCents / 100)}</span>
-      <span><strong>${ctx.config.returnDays}-day returns</strong>, we pay the postage</span>
-      <span><strong>Access Facts</strong> on every single product</span>
-    </span>
-  </p>
-  <header class="site-header">
-    <div class="wrap site-header__row">
-      <a class="brand" href="/" aria-label="Within Reach, home">${LOGO}<span class="brand__name">Within&nbsp;Reach</span></a>
+
+  <div class="utility">
+    <div class="wrap utility__row">
+      <ul class="utility__msgs">
+        <li><strong>Free delivery</strong> over ${money0(ctx, ctx.config.freeShippingOverCents)}</li>
+        <li><strong>${ctx.config.returnDays}-day returns</strong>, we pay the postage</li>
+        <li><strong>Text, email or phone.</strong> Never phone-only</li>
+      </ul>
+      <ul class="utility__links" aria-label="Site tools">
+        <li><a href="/display">Display settings</a></li>
+        <li><a href="/help">Help</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <header class="masthead">
+    <div class="wrap masthead__row">
+      <a class="brand" href="/" aria-label="Within Reach, home">${LOGO}<span>Within&nbsp;Reach</span></a>
       <form class="site-search" role="search" action="/shop" method="get">
-        <label for="site-q" class="sr-only">Search the shop</label>
         <div class="site-search__row">
-          <input id="site-q" type="search" name="q" value="${q}" maxlength="80" autocomplete="off" enterkeyhint="search" placeholder="Search products…">
-          <button class="btn btn--buy btn--small" type="submit">${glyph('magnifier', { size: 18, cls: 'btn__icon', width: 7 })}<span class="sr-only">Search</span><span aria-hidden="true">Search</span></button>
+          <label for="site-cat" class="sr-only">Search in category</label>
+          <select id="site-cat" name="cat">
+            <option value="">All</option>
+            ${CATEGORIES.map((c) => html`<option value="${c.id}" ${activeCat === c.id ? raw('selected') : ''}>${c.label}</option>`)}
+          </select>
+          <label for="site-q" class="sr-only">Search the shop</label>
+          <input id="site-q" type="search" name="q" value="${q}" maxlength="80" autocomplete="off" enterkeyhint="search" placeholder="Search for a product or a need">
+          <button type="submit">${glyph('magnifier', { size: 20, width: 8 })}<span>Search</span></button>
         </div>
       </form>
-      <nav class="site-nav" aria-label="Main">
-        <ul>
-          ${nav(ctx, '/help', 'Help')}
-          ${nav(ctx, '/display', 'Display')}
-          ${user ? nav(ctx, '/account', 'Account', /^\/(account|order)/) : nav(ctx, '/login', 'Sign in', /^\/(login|register)/)}
-          ${user?.role === 'admin' ? nav(ctx, '/admin', 'Admin', /^\/admin/) : ''}
-          <li><a class="cart-link" href="/cart" ${/^\/cart/.test(ctx.path) ? raw('aria-current="page"') : ''}>${glyph('cart', { size: 26, cls: 'cart-link__icon', width: 6 })}<span>Cart<span class="sr-only">, ${count} ${count === 1 ? 'item' : 'items'}</span></span><span class="cart-link__count" aria-hidden="true">${count}</span></a></li>
-        </ul>
+      <nav class="masthead__actions" aria-label="Account and cart">
+        ${user
+          ? html`<a class="mast-link" href="/account" ${cur(/^\/(account|order)/.test(ctx.path))}>Hi, ${user.name.split(' ')[0]}</a>`
+          : html`<a class="mast-link" href="/login" ${cur(/^\/(login|register)/.test(ctx.path))}>Sign in</a>`}
+        ${user?.role === 'admin' ? html`<a class="mast-link" href="/admin" ${cur(/^\/admin/.test(ctx.path))}>Admin</a>` : ''}
+        <a class="mast-link" href="/cart" ${cur(/^\/cart/.test(ctx.path))}>${glyph('cart', { size: 26, width: 6 })}<span>Cart<span class="sr-only">, ${count} ${count === 1 ? 'item' : 'items'}</span></span><span class="cart-link__count" aria-hidden="true">${count}</span></a>
       </nav>
     </div>
     <nav class="cat-strip" aria-label="Shop by category">
-      <ul class="wrap cat-strip__row">
-        <li><a href="/shop" ${ctx.path === '/shop' && !ctx.query.get('cat') ? raw('aria-current="page"') : ''}>All</a></li>
-        ${CATEGORIES.map((c) => html`<li><a href="/shop?cat=${c.id}" ${ctx.query.get('cat') === c.id ? raw('aria-current="page"') : ''}>${glyph(CAT_GLYPH[c.id] ?? 'button', { size: 18, cls: 'cat-strip__icon', width: 7 })}${c.label}</a></li>`)}
+      <ul class="cat-strip__row">
+        <li><a href="/shop" ${cur(ctx.path === '/shop' && !activeCat)}>All products</a></li>
+        ${CATEGORIES.map((c) => html`<li><a href="/shop?cat=${c.id}" ${cur(ctx.path === '/shop' && activeCat === c.id)}>${glyph(CAT_GLYPH[c.id] ?? 'button', { size: 18, cls: 'cat-strip__icon', width: 7 })}${c.label}</a></li>`)}
       </ul>
     </nav>
   </header>
 
-  <div class="live" role="status" aria-live="polite" aria-atomic="true">${flash ? html`<div class="flash flash--${flash.kind === 'error' ? 'error' : 'ok'}"><div class="wrap"><span class="flash__label">${flash.kind === 'error' ? 'Problem:' : 'Done:'}</span> ${flash.text}</div></div>` : ''}</div>
+  <div class="live" role="status" aria-live="polite" aria-atomic="true">${flash ? html`<div class="flash flash--${flash.kind === 'error' ? 'error' : 'ok'}"><div class="wrap"><span>${flash.kind === 'error' ? 'Problem:' : 'Done:'} ${flash.text}</span>${flash.link ? html`<a href="${flash.link.href}">${flash.link.label}</a>` : ''}</div></div>` : ''}</div>
 
   <main id="main" tabindex="-1">
     ${main}
@@ -91,28 +101,36 @@ export function layout(ctx, { title, main, description = '', robots = '', bodyCl
       <section aria-labelledby="ft-help">
         <h2 id="ft-help" class="footer-h">Talk to a person</h2>
         <p>Use whichever way is easiest for you. We never require a phone call.</p>
-        <ul class="plain">
+        <ul>
           ${support.email ? html`<li>Email: <a href="mailto:${support.email}">${support.email}</a></li>` : ''}
           ${support.sms ? html`<li>Text: <a href="sms:${support.sms}">${support.sms}</a></li>` : ''}
           ${support.phone ? html`<li>Phone: <a href="tel:${support.phone}">${support.phone}</a></li>` : ''}
           ${support.relay ? html`<li>Relay / video: ${support.relay}</li>` : ''}
         </ul>
       </section>
-      <nav aria-labelledby="ft-links">
-        <h2 id="ft-links" class="footer-h">About this site</h2>
-        <ul class="plain">
+      <nav aria-labelledby="ft-shop">
+        <h2 id="ft-shop" class="footer-h">Shop</h2>
+        <ul>${CATEGORIES.slice(0, 6).map((c) => html`<li><a href="/shop?cat=${c.id}">${c.label}</a></li>`)}<li><a href="/shop">All products</a></li></ul>
+      </nav>
+      <nav aria-labelledby="ft-help2">
+        <h2 id="ft-help2" class="footer-h">Help</h2>
+        <ul>
+          <li><a href="/help">Delivery and returns</a></li>
+          <li><a href="/display">Display settings</a></li>
+          <li><a href="/account">Your account</a></li>
+          <li><a href="/cart">Your cart</a></li>
+        </ul>
+      </nav>
+      <nav aria-labelledby="ft-about">
+        <h2 id="ft-about" class="footer-h">About</h2>
+        <ul>
           <li><a href="/accessibility">Accessibility statement</a></li>
           <li><a href="/privacy">Privacy and your data</a></li>
-          <li><a href="/help">Help and returns</a></li>
-          <li><a href="/display">Display settings</a></li>
           <li><a href="/.well-known/security.txt">Report a security problem</a></li>
         </ul>
       </nav>
-      <section aria-labelledby="ft-demo">
-        <h2 id="ft-demo" class="footer-h">Demo store</h2>
-        <p>This is a demonstration catalogue. Products are fictional and no payment is taken.</p>
-      </section>
     </div>
+    <div class="wrap footer-legal">Demo store: the catalogue is fictional and no payment is ever taken.</div>
   </footer>
 </body>
 </html>`;
@@ -122,7 +140,7 @@ export function layout(ctx, { title, main, description = '', robots = '', bodyCl
 export function pageHead({ title, lede = '', crumbs = null }) {
   return html`<div class="page-head">
     <div class="wrap">
-      ${crumbs ? html`<nav class="crumbs" aria-label="Breadcrumb"><ol>${crumbs.map(([href, label], i) => html`<li>${href ? html`<a href="${href}">${label}</a>` : html`<span aria-current="page">${label}</span>`}</li>`)}</ol></nav>` : ''}
+      ${crumbs ? html`<nav class="crumbs" aria-label="Breadcrumb"><ol>${crumbs.map(([href, label]) => html`<li>${href ? html`<a href="${href}">${label}</a>` : html`<span aria-current="page">${label}</span>`}</li>`)}</ol></nav>` : ''}
       <h1>${title}</h1>
       ${lede ? html`<p class="lede">${lede}</p>` : ''}
     </div>
@@ -135,10 +153,10 @@ export function errorPage(ctx, status, message) {
   return layout(ctx, {
     title,
     robots: 'noindex',
-    main: html`<div class="wrap prose narrow">
+    main: html`<div class="wrap prose">
       <h1>${title}</h1>
       <p class="lede">${message}</p>
-      <p><a class="btn" href="/shop">Browse the shop</a> <a class="btn btn--ghost" href="/help">Get help</a></p>
+      <p class="btn-row"><a class="btn" href="/shop">Browse the shop</a> <a class="btn btn--ghost" href="/help">Get help</a></p>
     </div>`,
   });
 }

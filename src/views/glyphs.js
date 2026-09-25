@@ -34,6 +34,10 @@ const G = {
   keyboard: '<rect x="8" y="28" width="80" height="42" rx="7"/><path d="M20 42h4M32 42h4M44 42h4M56 42h4M68 42h4M24 56h48"/>',
   stand: '<path d="M16 80h64"/><path d="M26 80l14-52h36l-9 52"/><path d="M46 44h22"/>',
   phone: '<rect x="26" y="10" width="44" height="76" rx="11"/><rect x="36" y="22" width="24" height="16" rx="3"/><circle cx="48" cy="66" r="7"/>',
+  truck: '<path d="M8 24h48v36H8z"/><path d="M56 36h16l12 14v10H56z"/><circle cx="26" cy="66" r="7"/><circle cx="70" cy="66" r="7"/>',
+  returns: '<path d="M20 40h44a16 16 0 0 1 0 32H30"/><path d="M34 26L20 40l14 14"/>',
+  list: '<path d="M14 28h68M14 48h68M14 68h44"/>',
+  chat: '<path d="M12 20h72v46H44L26 82V66H12z"/><path d="M28 38h40M28 50h24"/>',
   check: '<path d="M20 50l20 20 38-42"/>',
   cart: '<path d="M10 16h14l10 44h44l8-30H30"/><circle cx="40" cy="76" r="6"/><circle cx="72" cy="76" r="6"/>',
 };

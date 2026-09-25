@@ -41,7 +41,8 @@ CREATE TABLE IF NOT EXISTS products (
   glyph       TEXT NOT NULL,
   tone        TEXT NOT NULL,
   stock       INTEGER NOT NULL DEFAULT 0 CHECK (stock >= 0),
-  featured    INTEGER NOT NULL DEFAULT 0
+  featured    INTEGER NOT NULL DEFAULT 0,
+  image       TEXT NOT NULL DEFAULT ''   -- optional photo path under /public, layered over the illustrated tile
 );
 
 CREATE TABLE IF NOT EXISTS product_tags (
@@ -109,6 +110,10 @@ export function openDb(file) {
   const db = new DatabaseSync(file);
   db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000; PRAGMA synchronous = NORMAL;');
   db.exec(SCHEMA);
+  // Databases created before the image column existed: add it in place.
+  if (!db.prepare("SELECT 1 FROM pragma_table_info('products') WHERE name = 'image'").get()) {
+    db.exec("ALTER TABLE products ADD COLUMN image TEXT NOT NULL DEFAULT ''");
+  }
   return db;
 }
 

@@ -1,7 +1,7 @@
 import { html, raw } from '../lib/html.js';
 import { layout, pageHead } from '../views/layout.js';
 import { field, select, radios, checkbox, csrfField, errorSummary, money } from '../views/ui.js';
-import { summaryRows } from './shop.js';
+import { summaryRows, steps } from './shop.js';
 import { COMM_PREFS, COUNTRIES, STATUS_COPY } from '../catalog.js';
 import { cartLines, totals } from '../models.js';
 import { getPaymentProvider } from '../payments.js';
@@ -35,6 +35,7 @@ export function checkoutRoutes(app) {
       robots: 'noindex',
       main: html`
       ${pageHead({ title: 'Checkout' })}
+      <div class="wrap">${steps(2)}</div>
       <div class="wrap checkout">
         ${errorSummary(errors)}
         <form method="post" action="/checkout" novalidate class="checkout__form stack">
@@ -169,6 +170,7 @@ export function checkoutRoutes(app) {
       robots: 'noindex',
       main: html`
       ${pageHead({ title: `Order ${order.number}`, lede: STATUS_COPY[order.status] })}
+      <div class="wrap">${steps(3)}</div>
       <div class="wrap order">
         <ol class="progress" aria-label="Order progress">
           ${['received', 'packing', 'shipped', 'delivered'].map((st, i, arr) => {

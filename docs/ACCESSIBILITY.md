@@ -48,17 +48,19 @@ of these also honours the matching OS-level media feature (`prefers-color-scheme
 `prefers-reduced-motion`) when set to "System". Settings are stored in a cookie (works with no account) and,
 once signed in, on the account so they follow the shopper to another device.
 
-All body text meets **7:1** contrast in the default theme (AAA), and the high-contrast themes use pure
-black/white with fully saturated accent colours for anyone who needs more.
+Colour contrast is enforced by `test/contrast.test.js`, which parses the tokens in `public/css/app.css` and fails the
+build if any text/background pair in any of the four themes drops below WCAG AA (4.5:1 for text, 3:1 for icons,
+focus rings and input borders). The two high-contrast themes use pure black and white for anyone who needs more.
 
 ## Perceivability without colour or sound
 
 - Stock status, form errors and order status are always paired with text and/or an icon, never colour alone.
 - Pictograms (`views/glyphs.js`) are decorative and `aria-hidden="true"` — the product name/label is always
   present as real text next to them, so nothing is conveyed by the icon alone.
-- Product images are hand-drawn line pictograms rather than photographs: no reliance on photo detail that's
-  hard to make out at low vision, and no informative content is ever "baked into" an image with no text
-  alternative.
+- Product tiles are illustrated pictograms by default. A product can carry a real photo (`products.image`, a path
+  under `public/`); it is layered over the tile as a decorative `<img alt="">` because the name, price and
+  Access Facts next to it carry the information. If you add photos, keep the Access Facts, not the photo, as the
+  source of truth.
 
 ## Reading level and plain language
 
